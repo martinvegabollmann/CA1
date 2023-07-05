@@ -1,6 +1,80 @@
-
 {% include 'admin/headboard.html' %}
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            
+            <div class="card">
+                <div class="card-header">
+                    Books Details 
+                </div>
+                <div class="card-body">
+                    <form action="/admin/books/save" method="post" enctype="multipart/form-data">
 
-Book Administrator
+                        <div class="mb-3">
+                          <label for="txtName" class="form-label">Name:</label>
+                          <input type="text" class="form-control" name="txtName" id="txtName" aria-describedby="helpId" placeholder="Write name of the book">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="txtImage" class="form-label">Imagen:</label>
+                            <input type="file" class="form-control" name="txtImage" id="txtImage" aria-describedby="helpId" placeholder="Select Image">
+                          </div>
+
+                        <div class="mb-3">
+                            <label for="txtURL" class="form-label">URL Dowloand:</label>
+                            <input type="text" class="form-control" name="txtURL" id="txtURL" aria-describedby="helpId" placeholder="Write URL">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        
+
+                    </form>
+  
+
+                </div>
+                <div class="card-footer text-muted">
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-7">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>URL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr class="">
+                            <td scope="row">{{ book[0] }}</td>
+                            <td>{{ book[1] }}</td>
+                            <td>{{ book[2] }}</td>
+                            <th>{{ book[3] }}</th>
+                            <th>Delete</th>
+                        </tr>
+                        <td"></td>
+                       
+                        {% endfor%}
+
+                    </tbody>
+                </table>
+            </div>
+            
+            
+        </div>
+        
+    </div>
+</div>
+
+
 
 {% include 'admin/foot.html' %}
