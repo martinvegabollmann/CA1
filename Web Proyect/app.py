@@ -63,6 +63,24 @@ def admin_books_save():
 
     return redirect('/admin/books')
 
+@app.route('/admin/books/delete', methods=['POST'])
+def admin_books_delete():
+    _id=request.form['txtID']
+    print(_id)
+
+    connection=mysql.connect()
+    cursor= connection.cursor()
+    cursor.execute("SELECT * FROM `books` WHERE id=%s", (_id))
+    book=cursor.fetchall()
+    connection.commit()
+    print(book)
+
+    connection=mysql.connect()
+    cursor= connection.cursor()
+    cursor.execute("DELETE FROM `books` WHERE id=%s", (_id))
+    connection.commit()
+
+    return redirect('/admin/books')
 
 if __name__ =='__main__':
     app.run(debug=True)
