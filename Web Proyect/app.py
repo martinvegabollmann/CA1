@@ -1,6 +1,9 @@
 from flask import Flask
 from flask import render_template, request, redirect
 from flaskext.mysql import MySQL
+from datetime import datetime
+from flask import send_from_directory
+import os
 
 app=Flask(__name__)
 mysql=MySQL()
@@ -15,9 +18,21 @@ mysql.init_app(app)
 def start():
     return render_template('site/index.html')
 
+@app.route('/img/<image>')
+def images(image):
+    print(image)
+    return send_from_directory(os.path.join('templates/site/img'),image)
+
 @app.route('/books')
 def books():
-    return render_template('site/books.html')
+
+    connection=mysql.connect()
+    cursor= connection.cursor()
+    cursor.execute("SELECT * FROM `books`")
+    books=cursor.fetchall()
+    connection.commit()
+
+    return render_template('site/books.html', books=books)
 
 @app.route('/us')
 def us():
@@ -33,6 +48,7 @@ def admin_login():
 
 @app.route('/admin/books')
 def admin_books():
+
     connection=mysql.connect()
     cursor= connection.cursor()
     cursor.execute("SELECT * FROM `books`")
@@ -48,8 +64,15 @@ def admin_books_save():
     _url=request.form['txtURL']
     _archive=request.files['txtImage']
 
+    time=datetime.now()
+    currentTime=time.strftime('%Y%H%M%S')
+
+    if _archive.filename!="":
+        newName=currentTime+"_"+_archive.filename
+        _archive.save("templates/site/img/"+newName)
+
     sql="INSERT INTO `books` (`id`, `name`, `image`, `url`) VALUES (NULL, %s, %s, %s);"
-    date=(_name,_archive.filename,_url)
+    date=(_name,newName,_url)
 
     connection= mysql.connect()
     cursor=connection.cursor()
@@ -70,10 +93,13 @@ def admin_books_delete():
 
     connection=mysql.connect()
     cursor= connection.cursor()
-    cursor.execute("SELECT * FROM `books` WHERE id=%s", (_id))
+    cursor.execute("SELECT image FROM `books` WHERE id=%s", (_id))
     book=cursor.fetchall()
     connection.commit()
     print(book)
+
+    if os.path.exists("templates/site/img/"+str(book[0][0])):
+        os.unlink("templates/site/img/"+str(book[0][0]))
 
     connection=mysql.connect()
     cursor= connection.cursor()
