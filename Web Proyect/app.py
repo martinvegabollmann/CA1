@@ -25,6 +25,11 @@ def images(image):
     print(image)
     return send_from_directory(os.path.join('templates/site/img'),image)
 
+@app.route('/css/<archivecss>')
+def css_link(archivecss):
+    return send_from_directory(os.path.join('templates/site/css'),archivecss)
+
+
 @app.route('/books')
 def books():
 
@@ -62,7 +67,7 @@ def admin_login_post():
         session["user"]="administrator"
         return redirect("/admin")
 
-    return render_template('admin/login.html')
+    return render_template('admin/login.html',message="Access Denied")
 
 
 @app.route('/admin/close')

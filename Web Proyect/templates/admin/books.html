@@ -42,7 +42,7 @@
 
         <div class="col-md-7">
 
-                <table class="table">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -58,13 +58,16 @@
                             <td scope="row">{{ book[0] }}</td>
                             <td>{{ book[1] }}</td>
                             <td><img width="60" src="/img/{{ book[2] }}" class="img-fluid rounded-top" alt="">
-                                {{ book[2] }}
                             </td>
-                            <th>{{ book[3] }}</th>
+                            <th>
+    
+                                <a name="" id="" class="btn btn-success" href="{{ book[3] }}" role="button">URL...</a>
+
+                            </th>
                             <th>
                                 <form action="/admin/books/delete" method="post">
 
-                                    <input value="{{ book[0] }}" type="text" name="txtID" id="txtID">
+                                    <input value="{{ book[0] }}" type="hidden" name="txtID" id="txtID">
                                     <button type="submit" class="btn btn-danger">Delete</button>
 
                                 </form>

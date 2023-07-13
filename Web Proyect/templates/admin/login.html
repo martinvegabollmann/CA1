@@ -1,3 +1,5 @@
+{% include 'site/headboard.html' %}
+<br>
 <!doctype html>
 <html lang="en">
 
@@ -22,6 +24,15 @@
             </div>
             <div class="col-md-4">
                 <br>
+                {% if message %}
+                <div class="alert alert-danger" role="alert"> Incorrect Username or Password
+                  <strong>{{message}}</strong> 
+                </div>
+                {% endif %}
+                
+
+                
+
                 <div class="card">
                     <div class="card-header">
                         LOGIN
@@ -37,7 +48,7 @@
 
                             <div class="mb-3">
                                 <label for="txtPassword" class="form-label">PASSWORD:</label>
-                                <input type="text" class="form-control" name="txtPassword" id="txtPassword" aria-describedby="helpid" placeholder="Write your password">
+                                <input type="password" class="form-control" name="txtPassword" id="txtPassword" aria-describedby="helpid" placeholder="Write your password">
                             </div>
 
                             <button type="submit" class="btn btn-success">ENTER</button>
@@ -74,3 +85,4 @@
 </body>
 
 </html>
+{% include 'site/foot.html' %}
