@@ -1,20 +1,31 @@
 from flask import Flask
 from flask import render_template, request, redirect, session
+from flask_login import LoginManager,login_user,logout_user,login_required
+from flask_wtf.csrf import CSRFProtect
 from flaskext.mysql import MySQL
 from datetime import datetime
 from flask import send_from_directory
 import os
+from templates.entities.User import User
+from templates.entities.ModelUser import ModelUser
 
-
+csrf=CSRFProtect()
 app=Flask(__name__)
 mysql=MySQL()
 app.secret_key="develoteca"
+login_manager_app=LoginManager(app)
 
 app.config['MYSQL_DATABASE_HOST']='localhost'
 app.config['MYSQL_DATABASE_USER']='root'
 app.config['MYSQL_DATABASE_PASSWORD']=''
 app.config['MYSQL_DATABASE_DB']='website'
 mysql.init_app(app)
+
+
+@login_manager_app.user_loader
+def load_user(id):
+    return ModelUser.get_by_id(mysql,id)
+
 
 @app.route('/')
 def start():
@@ -46,9 +57,8 @@ def us():
     return render_template('site/us.html')
 
 @app.route('/admin/')
+@login_required
 def admin_index():
-    if not 'login' in session:
-        return redirect("/admin/login")
     return render_template('admin/index.html')
 
 @app.route('/admin/login')
@@ -57,31 +67,33 @@ def admin_login():
 
 @app.route('/admin/login', methods=['POST'])
 def admin_login_post():
-    _user=request.form['txtUser']
-    _password=request.form['txtPassword']
-    print(_user)
-    print(_password)
+    if request.method == 'POST':
+        user = User(0,request.form['username'], request.form['password'])
+        logged_user=ModelUser.login(mysql,user)
+        if logged_user is not None:
+            if logged_user.password:
+                login_user(logged_user)
+                return render_template('/admin/index.html')
+            else:
+                return render_template('/admin/login.html', message="INCORRECT USERNAME OR PASSWORD")
+        else:
+            return render_template('/admin/login.html', message="ACCESS DENIED")
+    else:
+        return render_template('/admin/login.html', message="ACCESS DENIED")
+        
 
-    if _user=="admin" and _password=="1234":
-        session["login"]=True
-        session["user"]="administrator"
-        return redirect("/admin")
-
-    return render_template('admin/login.html',message="Access Denied")
-
+    
 
 @app.route('/admin/close')
 def admin_login_close():
-    session.clear()
-    return redirect('/admin/login')
+    logout_user()
+    return render_template('/admin/login.html')
 
 
 @app.route('/admin/books')
+@login_required
 def admin_books():
 
-    if not 'login' in session:
-        return redirect("/admin/login")
-    
     connection=mysql.connect()
     cursor= connection.cursor()
     cursor.execute("SELECT * FROM `books`")
@@ -93,9 +105,6 @@ def admin_books():
 
 @app.route('/admin/books/save', methods=['POST'])
 def admin_books_save():
-
-    if not 'login' in session:
-        return redirect("/admin/login")
      
     _name=request.form['txtName']
     _url=request.form['txtURL']
@@ -126,9 +135,6 @@ def admin_books_save():
 @app.route('/admin/books/delete', methods=['POST'])
 def admin_books_delete():
 
-    if not 'login' in session:
-        return redirect("/admin/login")
-
     _id=request.form['txtID']
     print(_id)
 
@@ -149,5 +155,14 @@ def admin_books_delete():
 
     return redirect('/admin/books')
 
+def status_401(error):
+    return redirect("/admin/login")
+
+def status_404(error):
+    return "<h1> Page Not Found <h1>", 404
+
 if __name__ =='__main__':
+    csrf.init_app(app)
+    app.register_error_handler(401, status_401)
+    app.register_error_handler(404, status_404)
     app.run(debug=True)

@@ -34,24 +34,28 @@
                 
 
                 <div class="card">
+                
                     <div class="card-header">
                         LOGIN
                     </div>
+                    
                     <div class="card-body">
                         
                         <form action="/admin/login" method="post">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                             <div class="mb-3">
-                                <label for="txtUser" class="form-label">USER: </label>
-                                <input type="text" class="form-control" name="txtUser" id="txtUser" aria-describedby="helpid" placeholder="Write your user">
+                                
+                                <label for="username" class="form-label">USER: </label>
+                                <input type="text" class="form-control" name="username" id="username" aria-describedby="helpid" placeholder="Write your user">
                             </div>
 
                             <div class="mb-3">
-                                <label for="txtPassword" class="form-label">PASSWORD:</label>
-                                <input type="password" class="form-control" name="txtPassword" id="txtPassword" aria-describedby="helpid" placeholder="Write your password">
+                                <label for="password" class="form-label">PASSWORD:</label>
+                                <input type="password" class="form-control" name="password" id="password" aria-describedby="helpid" placeholder="Write your password">
                             </div>
 
-                            <button type="submit" class="btn btn-success">ENTER</button>
+                            <button type="submit" class="btn btn-success">Sign in</button>
 
                         </form>
                         
