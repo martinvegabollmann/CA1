@@ -75,7 +75,7 @@ def admin_login_post():
                 login_user(logged_user)
                 return render_template('/admin/index.html')
             else:
-                return render_template('/admin/login.html', message="INCORRECT USERNAME OR PASSWORD")
+                return render_template('/admin/login.html', message="ACCESS DENIED")
         else:
             return render_template('/admin/login.html', message="ACCESS DENIED")
     else:

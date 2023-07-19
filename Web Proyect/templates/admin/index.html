@@ -1,16 +1,13 @@
 {% include 'admin/headboard.html' %}
 
 <div class="p-5 bg-light">
-        <div class="container">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <h1 class="display-3">Welcome <strong> {{ current_user.fullname }} </strong> to the Web Site  </h1>
-            <p class="lead"> Here can Administrate all</p>
-            <hr class="my-2">
-            <p class="lead">
-            <a class="btn btn-primary btn-lg" href="/admin/books" role="button">Start</a>
-            </p>
-        </div>
+    <div class="container text-center">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h1 class="display-3">Welcome, <strong>{{ current_user.fullname }}</strong></h1>
+        <p class="lead">Welcome to the Administration website! As an administrator, you will have the ability to add and remove books quickly and easily.</p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="/admin/books" role="button">Get Started</a>
+    </div>
 </div>
-
 
 {% include 'admin/foot.html' %}
