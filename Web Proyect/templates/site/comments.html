@@ -1,0 +1,48 @@
+{% include 'site/headboard.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <h1 class="text-center">Comments</h1>
+    <div class="table-responsive">
+    
+    </div>
+    <form id="commentForm" action="/comments" method="POST" class="mt-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label for="namePerson">Name:</label>
+            <input type="text" class="form-control" name="namePerson" id="namePerson" placeholder="Name" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="comment">Comment:</label>
+            <textarea class="form-control" name="comment" id="comment" placeholder="Write your comment..." rows="4" required></textarea>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br>
+    <table class="table table-bordered table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Comentario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+            <tr>
+                <td>{{ comment[0] }}</td>
+                <td>{{ comment[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
+
+{% include 'site/foot.html' %}

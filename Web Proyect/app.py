@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session, jsonify
 from flask_login import LoginManager,login_user,logout_user,login_required
 from flask_wtf.csrf import CSRFProtect
 from flaskext.mysql import MySQL
@@ -82,8 +82,6 @@ def admin_login_post():
         return render_template('/admin/login.html', message="ACCESS DENIED")
         
 
-    
-
 @app.route('/admin/close')
 def admin_login_close():
     logout_user()
@@ -160,6 +158,31 @@ def status_401(error):
 
 def status_404(error):
     return "<h1> Page Not Found <h1>", 404
+
+
+@app.route('/comments', methods=['GET', 'POST'])
+def comments():
+    if request.method == 'POST':
+        namePerson = request.form.get('namePerson')
+        comment = request.form.get('comment')
+
+        if namePerson and comment:
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO comments (namePerson, comment) VALUES (%s, %s)", (namePerson, comment))
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    connection = mysql.connect()
+    cursor = connection.cursor()
+    cursor.execute("SELECT namePerson, comment FROM comments ORDER BY id DESC")
+    comments_data = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template('site/comments.html', comments=comments_data)
+
 
 if __name__ =='__main__':
     csrf.init_app(app)
