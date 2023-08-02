@@ -163,25 +163,31 @@ def status_404(error):
 @app.route('/comments', methods=['GET', 'POST'])
 def comments():
     if request.method == 'POST':
-        namePerson = request.form.get('namePerson')
-        comment = request.form.get('comment')
+        namePerson = request.form['namePerson']
+        comment = request.form['comment']
+        
+        if not namePerson or not comment:
+            return "Error: Name and comment are required fields.", 400
 
-        if namePerson and comment:
-            connection = mysql.connect()
-            cursor = connection.cursor()
-            cursor.execute("INSERT INTO comments (namePerson, comment) VALUES (%s, %s)", (namePerson, comment))
-            connection.commit()
-            cursor.close()
-            connection.close()
+        current_datetime = datetime.now()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        cursor.execute('INSERT INTO comments (namePerson, comment, created_at) VALUES (%s, %s, %s)',
+                       (namePerson, comment, current_datetime))
+        connection.commit()
+        cursor.close()
+        connection.close()
 
     connection = mysql.connect()
     cursor = connection.cursor()
-    cursor.execute("SELECT namePerson, comment FROM comments ORDER BY id DESC")
-    comments_data = cursor.fetchall()
+    cursor.execute('SELECT namePerson, comment, created_at FROM comments')
+    comments = [{'namePerson': namePerson, 'comment': comment, 'created_at': created_at} 
+                for namePerson, comment, created_at in cursor]
     cursor.close()
     connection.close()
 
-    return render_template('site/comments.html', comments=comments_data)
+    return render_template('site/comments.html', comments=comments)
 
 
 if __name__ =='__main__':
